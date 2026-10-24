@@ -16,7 +16,7 @@ from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 # ============================================================
 
 # Ссылка на существующую конференцию
-MEETING_URL = "https://telemost.yandex.ru/j/14551457830291"
+MEETING_URL = ""
 
 # Имя участника
 AGENT_NAME = "Ебень Обыкновенный"
