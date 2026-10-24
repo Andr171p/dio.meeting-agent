@@ -1,0 +1,5 @@
+name: dios-meeting-agent
+
+include:
+  - path: ./docker/meeting-browser.docker-compose.yml
+    project_directory: .

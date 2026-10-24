@@ -1,0 +1,55 @@
+services:
+  meeting-browser:
+    image: dios/meeting-browser:${PLAYWRIGHT_VERSION:-1.64.0}
+
+    build:
+      context: .
+      dockerfile: docker/meeting-browser/Dockerfile
+      args:
+        PLAYWRIGHT_VERSION: ${PLAYWRIGHT_VERSION:-1.64.0}
+
+    restart: unless-stopped
+    init: true
+
+    shm_size: ${BROWSER_SHM_SIZE:-1gb}
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    environment:
+      DISPLAY: ${BROWSER_DISPLAY:-:99}
+
+      BROWSER_SCREEN_WIDTH: ${BROWSER_SCREEN_WIDTH:-1920}
+      BROWSER_SCREEN_HEIGHT: ${BROWSER_SCREEN_HEIGHT:-1080}
+      BROWSER_SCREEN_DEPTH: ${BROWSER_SCREEN_DEPTH:-24}
+
+      BROWSER_WS_PATH: ${BROWSER_WS_PATH:?Browser WS path is required}
+
+      BROWSER_AUTOPLAY_POLICY: ${BROWSER_AUTOPLAY_POLICY:-no-user-gesture-required}
+
+      XDG_RUNTIME_DIR: /tmp/meeting-runtime
+      PULSE_SERVER: unix:/tmp/meeting-runtime/pulse/native
+      PULSE_SINK: meeting_output
+      PULSE_SOURCE: meeting_microphone.monitor
+
+    ports:
+      - "${BROWSER_HOST:-127.0.0.1}:${BROWSER_PORT:-3000}:3000"
+
+    volumes:
+      - type: bind
+        source: ${BROWSER_RECORDINGS_PATH:-./data/recordings}
+        target: /recordings
+
+    healthcheck:
+      test:
+        - CMD
+        - /opt/meeting-browser/healthcheck.sh
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    stop_grace_period: 20s

@@ -1,0 +1,8 @@
+load-module module-native-protocol-unix
+
+load-module module-null-sink sink_name=meeting_output sink_properties=device.description=MeetingOutput format=s16le rate=48000 channels=2
+
+load-module module-null-sink sink_name=meeting_microphone sink_properties=device.description=MeetingMicrophone format=s16le rate=48000 channels=2
+
+set-default-sink meeting_output
+set-default-source meeting_microphone.monitor
